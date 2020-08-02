@@ -17,7 +17,6 @@ services:
       - ./full-stack/zoo1/data:/data
       - ./full-stack/zoo1/datalog:/datalog
 
-
   kafka1:
     image: confluentinc/cp-kafka:5.2.1
     hostname: kafka1

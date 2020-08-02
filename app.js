@@ -1,7 +1,20 @@
 const express = require("express");
-const kafka = require('kafka-node')
+const { Kafka } = require('kafkajs')
 const bodyParser = require("body-parser");
 
+const config = {
+    kafka: {
+      TOPIC: 'clicks',
+      BROKERS: ['localhost:9092'],
+      GROUPID: 'bills-consumer-group',
+      CLIENTID: 'sample-kafka-client'
+    }
+}
+
+const client = new Kafka({
+    brokers: config.kafka.BROKERS,
+    clientId: config.kafka.CLIENTID
+})
 
 const app = express();
 app.use(bodyParser.json());
@@ -13,52 +26,31 @@ app.use(function(req, res, next) {
 });
 const PORT = process.env.PORT || 9000;
 
-// const client = new kafka.Client();
+const topic = config.kafka.TOPIC
 
-// const topics = [
-//     {
-//         topic: "clicks",
-//         offset: 0
-//     }
-// ]
+const producer = client.producer()
 
-// const options = {
-//     autoCommit: true
-// }
-
-// const consumer = new kafka.HighLevelConsumer(client, topics, options);
-// consumer.on("message", (message) => {
-//     console.log(message)
+// producer.on("ready", function() {
+//     console.log("Kafka producer is ready")
 // })
 
-const Producer = kafka.Producer,
-    client = new kafka.KafkaClient({ kafkaHost: "localhost:9092" }),
-    producer = new Producer(client)
-
-producer.on("ready", function() {
-    console.log("Kafka producer is ready")
-})
-
-producer.on("error", function(error) {
-    console.log("Producer is on error state")
-    console.error(error)
-})
+// producer.on("error", function(error) {
+//     console.log("Producer is on error state")
+//     console.error(error)
+// })
 
 app.get("/", function(req, res) {
     res.send("Service is running")
 })
 
 app.post("/api/click", function(req, res) {
-    console.log('getting message')
-    let message = JSON.stringify(req.body.message);
-    console.log(message)
-    const payload = [
-        { topic: "clicks", messages: message, partition: 0 }
-    ]
-    producer.send(payload, (err, data) => {
-        console.log("data sent:", data);
-        res.json(data);
-    })
+    console.log('getting message', req.body.message)
+    let message = JSON.stringify({ message: req.body.message });
+
+    const payload = {
+        topic: topic, messages: [{ key: "click", value: message }], partition: 0
+    }
+    producer.send(payload)
 })
 
 app.listen(PORT, () =>
