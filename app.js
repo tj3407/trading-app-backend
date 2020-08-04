@@ -51,6 +51,7 @@ app.post("/api/click", function(req, res) {
         topic: topic, messages: [{ key: "click", value: message }], partition: 0
     }
     producer.send(payload)
+    res.send("Success")
 })
 
 app.listen(PORT, () =>
