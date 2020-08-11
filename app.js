@@ -30,15 +30,6 @@ const topic = config.kafka.TOPIC
 
 const producer = client.producer()
 
-// producer.on("ready", function() {
-//     console.log("Kafka producer is ready")
-// })
-
-// producer.on("error", function(error) {
-//     console.log("Producer is on error state")
-//     console.error(error)
-// })
-
 app.get("/", function(req, res) {
     res.send("Service is running")
 })
