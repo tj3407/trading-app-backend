@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const config = {
     kafka: {
       TOPIC: 'clicks',
-      BROKERS: ['localhost:9092'],
+      BROKERS: ['3.16.10.31:9092'],
       GROUPID: 'bills-consumer-group',
       CLIENTID: 'sample-kafka-client'
     }
